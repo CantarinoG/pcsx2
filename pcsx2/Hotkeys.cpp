@@ -28,7 +28,7 @@ void VMManager::Internal::ResetVMHotkeyState()
 
 static void HotkeyAdjustTargetSpeed(double delta)
 {
-	const double min_speed = Achievements::IsHardcoreModeActive() ? 1.0 : 0.1;
+	const double min_speed = 0.1;
 	EmuConfig.EmulationSpeed.NominalScalar = std::max(min_speed, EmuConfig.EmulationSpeed.NominalScalar + delta);
 	if (VMManager::GetLimiterMode() != LimiterModeType::Nominal)
 		VMManager::SetLimiterMode(LimiterModeType::Nominal);
@@ -119,26 +119,6 @@ static void HotkeySaveStateSlot(s32 slot)
 
 static bool CanPause()
 {
-	static constexpr const float PAUSE_INTERVAL = 3.0f;
-	static Common::Timer::Value s_last_pause_time = 0;
-
-	if (!Achievements::IsHardcoreModeActive() || VMManager::GetState() == VMState::Paused)
-		return true;
-
-	const Common::Timer::Value time = Common::Timer::GetCurrentValue();
-	const float delta = static_cast<float>(Common::Timer::ConvertValueToSeconds(time - s_last_pause_time));
-	if (delta < PAUSE_INTERVAL)
-	{
-		Host::AddIconOSDMessage("PauseCooldown", ICON_FA_CLOCK,
-			TRANSLATE_PLURAL_STR("Hotkeys", "You cannot pause until another %n second(s) have passed.",
-				"", static_cast<int>(std::ceil(PAUSE_INTERVAL - delta))),
-			Host::OSD_QUICK_DURATION);
-		return false;
-	}
-
-	Host::RemoveKeyedOSDMessage("PauseCooldown");
-	s_last_pause_time = time;
-
 	return true;
 }
 

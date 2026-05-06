@@ -439,11 +439,7 @@ void LogWindow::onInputEntered()
 			success = false;
 		}
 
-		if (success && Achievements::IsHardcoreModeActive())
-		{
-			Console.Warning("Cannot write to EE SIO RX FIFO while RetroAchievements hardcore mode is active.");
-			success = false;
-		}
+		/* Bypassed Hardcore restriction */
 
 		if (success)
 			success = VMManager::WriteBytesToEESIORXFIFO({reinterpret_cast<const u8*>(str.data()), str.size()});

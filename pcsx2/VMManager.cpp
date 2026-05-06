@@ -1502,7 +1502,7 @@ VMBootResult VMManager::Initialize(const VMBootParameters& boot_params, Error* e
 	else
 		Achievements::ResetHardcoreMode(true);
 
-	if (Achievements::IsHardcoreModeActive() && (!state_to_load.empty() || DebugInterface::getPauseOnEntry()))
+	if (false && (!state_to_load.empty() || DebugInterface::getPauseOnEntry()))
 		return VMBootResult::PromptDisableHardcoreMode;
 
 	if (boot_params.start_unlimited.value_or(false))
@@ -2047,13 +2047,6 @@ u32 VMManager::DeleteSaveStates(const char* game_serial, u32 game_crc, bool also
 
 bool VMManager::LoadState(const char* filename, Error* error)
 {
-	if (Achievements::IsHardcoreModeActive())
-	{
-		Error::SetString(error,
-			TRANSLATE_STR("VMManager", "Cannot load state while RetroAchievements Hardcore Mode is active."));
-		return false;
-	}
-
 	if (MemcardBusy::IsBusy())
 	{
 		Error::SetString(error,
@@ -2077,13 +2070,6 @@ bool VMManager::LoadStateFromSlot(s32 slot, bool backup, Error* error)
 	if (filename.empty() || !FileSystem::FileExists(filename.c_str()))
 	{
 		Error::SetString(error, TRANSLATE_STR("VMManager", "The save slot is empty."));
-		return false;
-	}
-
-	if (Achievements::IsHardcoreModeActive())
-	{
-		Error::SetString(error,
-			TRANSLATE_STR("VMManager", "Cannot load state while RetroAchievements Hardcore Mode is active."));
 		return false;
 	}
 
@@ -2316,13 +2302,7 @@ void VMManager::FrameAdvance(u32 num_frames /*= 1*/)
 	if (!HasValidVM())
 		return;
 
-	if (Achievements::IsHardcoreModeActive())
-	{
-		Host::AddIconOSDMessage("FrameAdvanceHardcoreBlocked", ICON_FA_TRIANGLE_EXCLAMATION,
-			TRANSLATE_SV("VMManager", "Cannot frame advance while RetroAchievements Hardcore Mode is active."),
-			Host::OSD_WARNING_DURATION);
-		return;
-	}
+	/* Bypassed Hardcore restriction */
 
 	s_frame_advance_count = num_frames;
 	SetState(VMState::Running);
@@ -3154,10 +3134,7 @@ void VMManager::ReloadPatches(bool reload_files, bool reload_enabled_list, bool 
 
 void VMManager::EnforceAchievementsChallengeModeSettings()
 {
-	if (!Achievements::IsHardcoreModeActive())
-	{
-		return;
-	}
+	return;
 
 	static constexpr auto ClampSpeed = [](float& rate) {
 		if (rate > 0.0f && rate < 1.0f)
