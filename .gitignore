@@ -122,3 +122,11 @@ CMakeSettings.json
 /ci-artifacts/
 /out/
 /.cache/
+
+/PCSX2.AppDir/
+appimagetool-x86_64.AppImage
+linuxdeploy-plugin-qt-x86_64.AppImage
+linuxdeploy-x86_64.AppImage
+net.pcsx2.PCSX2.desktop
+PCSX2-v2.7.316.AppImage
+PCSX2.png
